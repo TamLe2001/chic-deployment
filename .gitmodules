@@ -1,6 +1,7 @@
 [submodule "frontend"]
 	path = frontend
 	url = git@github.com:juliesoftware/chicforgeeks_frontend.git
+	branch = raspberry
 [submodule "backend"]
 	path = backend
 	url = git@github.com:TamLe2001/ChicForGeeksBackend.git
