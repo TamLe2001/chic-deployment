@@ -5,3 +5,4 @@
 [submodule "backend"]
 	path = backend
 	url = git@github.com:TamLe2001/ChicForGeeksBackend.git
+	branch = raspberry
