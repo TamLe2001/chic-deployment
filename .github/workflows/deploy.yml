@@ -15,25 +15,39 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Tailscale
-        uses: tailscale/github-action@v2
-        with:
-          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
-          oauth-secret: ${{ secrets.TAILSCALE_OAUTH_SECRET }}
-          tags: tag:ci
+        run: |
+          # Install Tailscale
+          curl -fsSL https://tailscale.com/install.sh | sh
+          
+          # Start Tailscale with auth key
+          sudo tailscale up --authkey=${{ secrets.TAILSCALE_AUTHKEY }} --ssh
+
+      - name: Wait for Tailscale connection
+        run: |
+          # Wait for Tailscale to be ready
+          for i in {1..30}; do
+            if sudo tailscale status > /dev/null 2>&1; then
+              echo "Tailscale connected!"
+              sudo tailscale status
+              break
+            fi
+            echo "Waiting for Tailscale connection... ($i/30)"
+            sleep 2
+          done
 
       - name: Setup SSH Key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.RASPBERRY_PI_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.RASPBERRY_PI_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
 
       - name: Deploy to Raspberry Pi
         env:
           RASPBERRY_PI_HOST: ${{ secrets.RASPBERRY_PI_HOST }}
           RASPBERRY_PI_USER: ${{ secrets.RASPBERRY_PI_USER }}
         run: |
-          ssh $RASPBERRY_PI_USER@$RASPBERRY_PI_HOST << 'ENDSSH'
+          ssh -o StrictHostKeyChecking=no $RASPBERRY_PI_USER@$RASPBERRY_PI_HOST << 'ENDSSH'
             # Navigate to project directory
             cd ~/chic-deployment || exit 1
             
@@ -62,8 +76,13 @@ jobs:
           RASPBERRY_PI_HOST: ${{ secrets.RASPBERRY_PI_HOST }}
           RASPBERRY_PI_USER: ${{ secrets.RASPBERRY_PI_USER }}
         run: |
-          ssh $RASPBERRY_PI_USER@$RASPBERRY_PI_HOST << 'ENDSSH'
+          ssh -o StrictHostKeyChecking=no $RASPBERRY_PI_USER@$RASPBERRY_PI_HOST << 'ENDSSH'
             cd ~/chic-deployment
             docker-compose ps
             echo "Deployment completed successfully!"
           ENDSSH
+
+      - name: Cleanup
+        if: always()
+        run: |
+          sudo tailscale down || true
