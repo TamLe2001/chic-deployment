@@ -69,8 +69,3 @@ jobs:
             sudo docker compose ps
             echo "Deployment completed successfully!"
           ENDSSH
-
-      - name: Cleanup
-        if: always()
-        run: |
-          sudo tailscale down || true
