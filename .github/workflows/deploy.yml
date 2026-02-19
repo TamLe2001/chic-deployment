@@ -20,6 +20,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup Tailscale
+        run: |
+          # Install Tailscale
+          curl -fsSL https://tailscale.com/install.sh | sh
+          
+          # Start Tailscale with auth key
+          sudo tailscale up --authkey=${{ secrets.TAILSCALE_AUTHKEY }} --ssh
+
+      - name: Wait for Tailscale connection
+        run: |
+          # Wait for Tailscale to be ready
+          for i in {1..30}; do
+            if sudo tailscale status > /dev/null 2>&1; then
+              echo "Tailscale connected!"
+              sudo tailscale status
+              break
+            fi
+            echo "Waiting for Tailscale connection... ($i/30)"
+            sleep 2
+          done
+
       - name: Setup SSH Key
         run: |
           mkdir -p ~/.ssh
@@ -69,3 +90,8 @@ jobs:
             sudo docker compose ps
             echo "Deployment completed successfully!"
           ENDSSH
+
+      - name: Cleanup
+        if: always()
+        run: |
+          sudo tailscale down || true
