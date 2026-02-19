@@ -54,21 +54,21 @@ jobs:
             # Pull latest changes
             git pull origin main
             
+            # Pull latest images and rebuild (while old containers still running)
+            sudo docker compose pull
+            sudo docker compose build --no-cache
+            
             # Stop existing containers
-            docker compose down
+            sudo docker compose down
             
-            # Pull latest images and rebuild
-            docker compose pull
-            docker compose build --no-cache
-            
-            # Start services
-            docker compose up -d
+            # Start new services immediately
+            sudo docker compose up -d
             
             # Clean up old images
-            docker image prune -f
+            sudo docker image prune -f
             
             # Show running containers
-            docker compose ps
+            sudo docker compose ps
           ENDSSH
 
       - name: Verify Deployment
@@ -78,7 +78,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no $RASPBERRY_PI_USER@$RASPBERRY_PI_HOST << 'ENDSSH'
             cd ~/chic-deployment
-            docker compose ps
+            sudo docker compose ps
             echo "Deployment completed successfully!"
           ENDSSH
 
