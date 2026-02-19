@@ -54,6 +54,9 @@ jobs:
             # Pull latest changes
             git pull origin main
             
+            # Update submodules
+            git submodule update --init --recursive
+            
             # Pull latest images and rebuild (while old containers still running)
             sudo docker compose pull
             sudo docker compose build --no-cache
