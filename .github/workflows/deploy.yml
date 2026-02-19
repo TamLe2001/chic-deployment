@@ -8,6 +8,10 @@ on:
   repository_dispatch:
     types: [frontend_submodule_update, backend_submodule_update]
 
+concurrency:
+  group: raspberry-pi-deployment
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
