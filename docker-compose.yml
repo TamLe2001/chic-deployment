@@ -4,10 +4,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: chic-backend
-    environment:
-      # Adjust DB name and secret as needed
-      MONGO_URI: "mongodb://mongo:27017/chicforgeeks"
-      FLASK_ENV: "production"
+    env_file:
+      - ./backend/.env
     ports:
       - "8000:8000"
     depends_on:
