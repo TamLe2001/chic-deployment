@@ -6,7 +6,7 @@ on:
       - main
   workflow_dispatch:
   repository_dispatch:
-    types: [submodule_update]
+    types: [frontend_submodule_update, backend_submodule_update]
 
 jobs:
   deploy:
