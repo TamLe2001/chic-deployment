@@ -1,0 +1,42 @@
+@startuml ERDiagram
+
+entity User {
+  * id : UserId
+  --
+  * name : string
+  * email : string
+  profile_picture : string
+  bio : text
+  birthday : date
+  role : string
+  created_at : datetime
+}
+
+entity Outfit {
+  * id : OutfitId
+  --
+  * name : string
+  * user_id : UserId (FK)
+  style : string
+  bio : text
+  hat : string
+  shirt : string
+  pants : string
+  shoes : string
+  published : boolean
+  created_at : datetime
+}
+
+entity Follow {
+  * id : FollowId
+  --
+  * follower_id : UserId (FK)
+  * followed_id : UserId (FK)
+  created_at : datetime
+}
+
+User ||--o{ Outfit : "creates"
+User ||--o{ Follow : "can follow"
+User ||--o{ Follow : "can be followed by"
+
+@enduml

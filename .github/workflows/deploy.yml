@@ -1,0 +1,69 @@
+name: Deploy to Raspberry Pi
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TAILSCALE_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.RASPBERRY_PI_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to Raspberry Pi
+        env:
+          RASPBERRY_PI_HOST: ${{ secrets.RASPBERRY_PI_HOST }}
+          RASPBERRY_PI_USER: ${{ secrets.RASPBERRY_PI_USER }}
+        run: |
+          ssh $RASPBERRY_PI_USER@$RASPBERRY_PI_HOST << 'ENDSSH'
+            # Navigate to project directory
+            cd ~/chic-deployment || exit 1
+            
+            # Pull latest changes
+            git pull origin main
+            
+            # Stop existing containers
+            docker-compose down
+            
+            # Pull latest images and rebuild
+            docker-compose pull
+            docker-compose build --no-cache
+            
+            # Start services
+            docker-compose up -d
+            
+            # Clean up old images
+            docker image prune -f
+            
+            # Show running containers
+            docker-compose ps
+          ENDSSH
+
+      - name: Verify Deployment
+        env:
+          RASPBERRY_PI_HOST: ${{ secrets.RASPBERRY_PI_HOST }}
+          RASPBERRY_PI_USER: ${{ secrets.RASPBERRY_PI_USER }}
+        run: |
+          ssh $RASPBERRY_PI_USER@$RASPBERRY_PI_HOST << 'ENDSSH'
+            cd ~/chic-deployment
+            docker-compose ps
+            echo "Deployment completed successfully!"
+          ENDSSH
