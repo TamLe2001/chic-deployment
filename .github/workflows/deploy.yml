@@ -60,8 +60,9 @@ jobs:
             # Pull latest changes
             git pull origin main
             
-            # Update submodules
-            git submodule update --init --recursive
+            # Update submodules and pull latest from their main branches
+            git submodule update --init --recursive --remote
+            git submodule foreach 'git checkout main && git pull origin main'
             
             # Pull latest images and rebuild (while old containers still running)
             sudo docker compose pull
