@@ -55,7 +55,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no $RASPBERRY_PI_USER@$RASPBERRY_PI_HOST << 'ENDSSH'
             # Navigate to project directory
-            cd ~/chic-deployment || exit 1
+            cd /mnt/ssd/chic-deployment || exit 1
             
             # Pull latest changes
             git pull origin main
@@ -86,7 +86,7 @@ jobs:
           RASPBERRY_PI_USER: ${{ secrets.RASPBERRY_PI_USER }}
         run: |
           ssh -o StrictHostKeyChecking=no $RASPBERRY_PI_USER@$RASPBERRY_PI_HOST << 'ENDSSH'
-            cd ~/chic-deployment
+            cd /mnt/ssd/chic-deployment
             sudo docker compose ps
             echo "Deployment completed successfully!"
           ENDSSH
