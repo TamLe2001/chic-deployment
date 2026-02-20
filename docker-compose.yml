@@ -18,10 +18,10 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_API_BASE_URL: "http://85.191.37.69:8000/api"
+        NEXT_PUBLIC_API_BASE_URL: "https://chicforgeeks.online/api/outfits"
     container_name: chic-frontend
     environment:
-      NEXT_PUBLIC_API_BASE_URL: "http://85.191.37.69:8000/api"
+      NEXT_PUBLIC_API_BASE_URL: "https://chicforgeeks.online/api/outfits"
     ports:
       - "3000:3000"
     depends_on:
