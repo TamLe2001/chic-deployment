@@ -3,7 +3,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: chic-backend
+    # container_name: chic-backend  <-- DELETE OR COMMENT
     env_file:
       - ./backend/.env
     ports:
@@ -19,7 +19,7 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_BASE_URL: "https://chicforgeeks.online/api"
-    container_name: chic-frontend
+    # container_name: chic-frontend  <-- DELETE OR COMMENT
     environment:
       NEXT_PUBLIC_API_BASE_URL: "https://chicforgeeks.online/api"
     ports:
@@ -29,7 +29,7 @@ services:
 
   mongo:
     image: mongo:7
-    container_name: chic-mongo
+    # container_name: chic-mongo  <-- DELETE OR COMMENT
     restart: unless-stopped
     ports:
       - "27017:27017"
