@@ -64,18 +64,20 @@ jobs:
             git submodule update --init --recursive --remote
             git submodule foreach 'git checkout main && git pull origin main'
             
-            # Pull latest images and rebuild (while old containers still running)
-            sudo docker compose pull
-            sudo docker compose build --no-cache
+            # Build with cache to avoid huge layer growth
+            sudo docker compose build --pull
             
-            # Stop existing containers
-            sudo docker compose down -v --rmi all --remove-orphans
+            # Stop existing containers (keep persistent volumes)
+            sudo docker compose down --remove-orphans
             
             # Start new services immediately
-            sudo docker compose up --force-recreate -d
+            sudo docker compose up --build --force-recreate -d
             
-            # Clean up old images
-            sudo docker image prune -f
+            # Targeted cleanup to recover disk safely
+            sudo docker container prune -f
+            sudo docker image prune -af --filter "until=24h"
+            sudo docker builder prune -af --filter "until=24h"
+            sudo docker system df
             
             # Show running containers
             sudo docker compose ps
