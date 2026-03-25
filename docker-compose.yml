@@ -24,7 +24,7 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_BASE_URL: "https://chicforgeeks.online/api"
-        MESHY_AI_API_KEY: "msy_AUv2jbJepaL4OhDgyj38t6SlINIHqO08C3bV"
+        MESHY_AI_API_KEY: "msy_UjhoMb0zQRwvlznDunxZWqfHVrjpMeDTQAGG"
     # container_name: chic-frontend  <-- DELETE OR COMMENT
     environment:
       NEXT_PUBLIC_API_BASE_URL: "https://chicforgeeks.online/api"
