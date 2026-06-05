@@ -23,11 +23,11 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_API_BASE_URL: "https://chicforgeeks.online/api"
+        NEXT_PUBLIC_API_BASE_URL: "http://chicforgeeks.online:8000/api"
         MESHY_AI_API_KEY: "msy_UjhoMb0zQRwvlznDunxZWqfHVrjpMeDTQAGG"
     # container_name: chic-frontend  <-- DELETE OR COMMENT
     environment:
-      NEXT_PUBLIC_API_BASE_URL: "https://chicforgeeks.online/api"
+      NEXT_PUBLIC_API_BASE_URL: "http://chicforgeeks.online:8000/api"
       MESHY_AI_API_KEY: "msy_UjhoMb0zQRwvlznDunxZWqfHVrjpMeDTQAGG"
     ports:
       - "3000:3000"
